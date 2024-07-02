@@ -29,7 +29,7 @@ subroutine xyadv(u, v, conc, dt, dx, dy)
 
     ! Perform advection using a simple forward-in-time, centered-in-space scheme
     do i = 2, size(conc, 1) - 1
-        do j = 2, size(conc, 1) - 1
+        do j = 2, size(conc, 2) - 1
             conc(i, j) = conc(i, j) - &
                 (u(i, j) * dt / dx) * (conc(i, j) - conc(i - 1, j)) - &
                 (v(i, j) * dt / dy) * (conc(i, j) - conc(i, j - 1))

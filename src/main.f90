@@ -7,26 +7,18 @@ program main
     integer, parameter :: nx = 100
     integer, parameter :: ny = 50
     integer, parameter :: nt = 60
-    integer, parameter :: dt = 1
+    real, parameter :: dt = 1.0
     real :: dx, dy
     real, dimension(nx, ny) :: u, v, conc
 
-    integer :: i, j, n
+    integer :: i, j
 
     dx = 10
     dy = 10
-    ! 初始化坐标
-    do i = 1, nx
-        x(i) = real(i - 1) * dx
-    end do
-    do j = 1, ny
-        y(j) = real(j - 1) * dy
-    end do
-
     ! Set initial condition (e.g., Gaussian distribution)
     do i = 1, nx
         do j = 1, ny
-            conc(i, j) = exp(-((x(i) - 0.5)**2 + (y(j) - 0.5)**2) / 0.01)
+            conc(i, j) = exp(-((i*dx - 0.5)**2 + (j*dy - 0.5)**2) / 0.01)
         end do
     end do
 

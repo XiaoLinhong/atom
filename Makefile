@@ -23,7 +23,7 @@ endif
 ifeq ($(COMPIFLE), intel)
    FC = ifort
    # Enable Intel compiler warnings
-   FFLAGS += -warn=all
+   FFLAGS += -warn all
    # Good coding practices
    FFLAGS +=
    # Additional warnings
