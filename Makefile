@@ -55,9 +55,9 @@ FFLAGS += -I$(INC_DIR)
 # execuble file
 EXE = $(DST_DIR)/$(TARGET)
 
-# Source files
+# Source files: 
 SRCS := $(wildcard $(SRC_DIR)/*.f90) # 返回匹配到的文件列表
-SRCS +=  # Add your source files here
+SRCS +=  # Add your source files here 
 
 # Object files
 NAME := $(notdir $(SRCS))
@@ -78,7 +78,7 @@ $(EXE): $(OBJS)
 
 # 静态模式替换
 $(OBJS): $(DST_DIR)/%.o: $(SRC_DIR)/%.f90
-	$(FC) $(FFLAGS) -c $< -o $@
+	$(FC) $(FFLAGS) -J$(DST_DIR) -c $< -o $@
 
 ## 4. run this program 
 
