@@ -62,7 +62,7 @@ SRCS +=  # Add your source files here
 # Object files
 NAME := $(notdir $(SRCS))
 OBJS := $(addprefix $(DST_DIR)/, $(NAME:.f90=.o)) # 变量值的替换
-# OBJDEPS := $(OBJECTS:.o=.d) # 头文件的依赖
+#DEPS := $(OBJECTS:.o=.d) # 头文件的依赖
 
 ## 3. compile
 ifeq ($(MAKECMDGOALS), test)
@@ -71,6 +71,8 @@ ifeq ($(MAKECMDGOALS), test)
     SRCS += $(wildcard $(TEST_DIR)/*.f90)
     EXE = $(WORK_DIR)/$(test)
 endif
+
+$(shell ./deps $(SRCS) > $(DST_DIR)/Makefile.dep)
 
 # link the program
 $(EXE): $(OBJS)
@@ -98,3 +100,5 @@ test: $(EXE)
 # Clean up
 clean:
 	rm -rf $(DST_DIR)
+
+include $(DST_DIR)/Makefile.dep
