@@ -1,0 +1,179 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="一个FORTRAN现代化开发的模板仓，展示如何使用软件工程工具进行科学计算开发">
+    <meta name="author" content="Linhong Xiao" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>第二章 文档生成 &ndash; atom</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">atom </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="index.html">FORTRAN工程化实践</a></li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/main.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>第二章 文档生成</h1>
+    <div class="container p-2 mb-4 bg-light border rounded-3">
+      <div class="row align-items-center justify-content-between">
+        <div class="col">
+          <ul class="list-inline" style="margin-bottom:0px; display:inline">
+          </ul>
+        </div>
+        <div class="col">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='index.html'>FORTRAN工程化实践</a></li>
+              <li class="breadcrumb-item active" aria-current="page">第二章 文档生成</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+      <div class="col-3">
+        <div class="card card-body bg-light" id="sidebar-toc">
+          <ul class="nav flex-column align-items">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">FORTRAN工程化实践</a>
+            </li>
+          </ul>
+          <hr>
+          <nav class="nav nav-pills flex-column">
+              <a class="nav-link" href="fpm.html">第一章 包管理器</a>
+              <a class="nav-link active disabled" href="ford.html">第二章 文档生成</a>
+              <a class="nav-link" href="ppm.html">第一章 平流输送</a>
+          </nav>
+        </div>
+      </div>
+
+    <div class="col-9" id='text'>
+      <h4>简介</h4>
+<p>写文档一直都是程序员的噩梦，特别是在word文档里面编辑。</p>
+<p>代码总是确定性的描述，而文字则是充满了歧义。当时看代码总是痛苦的，因为代码是给编译器看的，所以我们一定是需要文档的。</p>
+<p>如何减少写文档的痛苦，当前的最佳文档实践方式是在实现代码的同时，在代码的相同位置，以注释的方式去进行文档的编写。</p>
+<p>这样就引申出一个需求，如何把代码文件（一般为文本文件）中的以注释编辑的文档，以更加漂亮可读的方式呈现出来。</p>
+<p>这就是文档自动生成工具的由来，而目前最好的为fortran而生的文档生成工具就是<a href="https://github.com/Fortran-FOSS-Programmers/ford">ford</a></p>
+<p>ford采用<a href="https://markdown.com.cn/">Markdown</a>来编写纯文本格式的文档。</p>
+<p>ford的使用非常简单，只需要在代码仓的主目录中输入<code>ford proj.md</code>即可在当前目录产生HTML格式的文档，简单来说，ford会从<code>proj.md</code>（命名方式并不固定）读取一些代码仓的元数据信息（比如作者名称，简洁等等，也包含ford的一些配置信息），同时会解析代码仓主目录下的<code>src/*[fF]90</code>代码文件，会形成相关的链接结构（方便进行跳转）。当然ford也会额外的抽取一些特殊的注释文档，在后续会详细介绍。</p>
+<h4>在代码中编写文档</h4>
+<p>如果在写Fortran时，不写专门的文档注释，那么ford只是简单的把源代码（<code>*.f90</code>）、代码中的模块（<code>Module</code>）和模块中的过程体（<code>Module</code>）和模块中的一些独立单元（<code>subroutine, function, type</code>）和入口函数（<code>program</code>）解析出来，并形成链接。如果我们要告诉ford，对于某个对象，你应该额外的抽出一些注释，我们应该怎么做呢？</p>
+<p>用双感叹号<code>!!</code>来告诉ford（这个符号可以改变，但是一般来说没有必要），这是文档注释。而ford会忽略掉普通的感叹号<code>!</code>注释。 文档注释应该在标注代码之后（有些人喜欢在函数定义的前面写函数的注释，通过特殊的标注<code>!&gt;</code>也是可以支持的，不过不建议这样去做）。 </p>
+<div class="codehilite"><pre><span></span><code><span class="k">subroutine </span><span class="n">demo</span><span class="p">(</span><span class="n">cats</span><span class="p">,</span><span class="w"> </span><span class="n">dogs</span><span class="p">,</span><span class="w"> </span><span class="n">food</span><span class="p">,</span><span class="w"> </span><span class="n">angry</span><span class="p">)</span>
+<span class="w">    </span><span class="c">!! Feeds your cats and dogs, if enough food is available. If not enough</span>
+<span class="w">    </span><span class="c">!! food is available, some of your pets will get angry.</span>
+
+<span class="w">    </span><span class="c">! Arguments</span>
+<span class="w">    </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">cats</span>
+<span class="w">        </span><span class="c">!! The number of cats to keep track of.</span>
+<span class="w">    </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">dogs</span>
+<span class="w">        </span><span class="c">!! The number of dogs to keep track of.</span>
+<span class="w">    </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">food</span>
+<span class="w">        </span><span class="c">!! The ammount of pet food (in kilograms) which you have on hand.</span>
+<span class="w">    </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">angry</span>
+<span class="w">        </span><span class="c">!! The number of pets angry because they weren&#39;t fed.</span>
+
+<span class="w">    </span><span class="k">return</span>
+<span class="k">end subroutine </span><span class="n">demo</span>
+</code></pre></div>
+
+<p>对于比较长的文档块，可以使用<code>!*</code>作为第一条文档的注释。</p>
+    </div>
+  </div>
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              atom
+ was developed by Linhong Xiao<br>              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

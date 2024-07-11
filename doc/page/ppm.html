@@ -1,0 +1,300 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="一个FORTRAN现代化开发的模板仓，展示如何使用软件工程工具进行科学计算开发">
+    <meta name="author" content="Linhong Xiao" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>第一章 平流输送 &ndash; atom</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">atom </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="index.html">FORTRAN工程化实践</a></li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../program/main.html">Program</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>第一章 平流输送</h1>
+    <div class="container p-2 mb-4 bg-light border rounded-3">
+      <div class="row align-items-center justify-content-between">
+        <div class="col">
+          <ul class="list-inline" style="margin-bottom:0px; display:inline">
+          </ul>
+        </div>
+        <div class="col">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='index.html'>FORTRAN工程化实践</a></li>
+              <li class="breadcrumb-item active" aria-current="page">第一章 平流输送</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+      <div class="col-3">
+        <div class="card card-body bg-light" id="sidebar-toc">
+          <ul class="nav flex-column align-items">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">FORTRAN工程化实践</a>
+            </li>
+          </ul>
+          <hr>
+          <nav class="nav nav-pills flex-column">
+              <a class="nav-link" href="fpm.html">第一章 包管理器</a>
+              <a class="nav-link" href="ford.html">第二章 文档生成</a>
+              <a class="nav-link active disabled" href="ppm.html">第一章 平流输送</a>
+          </nav>
+        </div>
+      </div>
+
+    <div class="col-9" id='text'>
+      <h3>平流输送过程</h3>
+<p>平流输送对与大气中惰性气体的再分配有着支配性作用，
+是空气质量数值模式(CTM)中非常重要的过程。</p>
+<p>平流过程的方程通过大气连续性方程得到（对于空气密度就是连续性方程）</p>
+<p>
+<script type="math/tex; mode=display"> 
+    \frac{\partial c}{\partial t} = 
+    - \nabla \cdot (\mathbf{v} c) 
+    \tag {1.1} \label {1.1}
+  </script>
+</p>
+<p>其中<script type="math/tex">c</script> 表示污染物的浓度（质量浓度，如<script type="math/tex">\mu g/m^3</script>）</p>
+<p>三维平流过程就是在已知风场（大尺度风场）的情况下，求解大气连续性方程。</p>
+<p>当然给定的风场是离散的，同时我们也需要通过数值的方式来解这个方程</p>
+<p>我们通过一个简单推导来理解如何对平流过程进行数值求解。</p>
+<p>首先把散度符号展开</p>
+<p>
+<script type="math/tex; mode=display">
+ \frac{\partial c}{\partial t} = 
+ - (\frac{\partial (u c)}{\partial x} + 
+    \frac{\partial (v c)}{\partial y} + 
+    \frac{\partial (w c)}{\partial z})
+ \tag {1.2}
+ </script>
+</p>
+<p>我们考虑一维的平流输送方程
+ <script type="math/tex; mode=display">
+ \frac{\partial c}{\partial t} = 
+ - \frac{\partial (u c)}{\partial x}
+ \tag {1.3}
+ </script>
+</p>
+<p>一维的平流输送方程有两个需要离散化处理的变量 <script type="math/tex">{\partial x}</script> 和 <script type="math/tex">{\partial t}</script> 。在离散化过程中，我们假定空间分辨率为定值。</p>
+<p>先对其进行空间上的离散处理。</p>
+<p><img alt="1D advection" src="../images/advection.png"></p>
+<p>那么公式可以改写为
+<script type="math/tex; mode=display">
+   \frac{\partial c_{i}}{\partial t} = 
+   \frac{f_{i-1/2}-f_{i+1/2}}{\Delta x}
+   \tag {1.4} \label {1.4}
+</script>
+</p>
+<p>其中<script type="math/tex">f_{i-1/2}</script> 为格子<script type="math/tex">i-1</script> 和格子<script type="math/tex">i</script> 之间的边界(<script type="math/tex">i-1/2</script>) 处的通量。</p>
+<p>
+<script type="math/tex; mode=display">
+    f_{i-1/2} = 
+    u_{x_{i-1/2}}^t \times c_{x_{i-1/2}}^t
+    \tag {1.5} \label {1.5}
+</script>
+</p>
+<p>将公式\ref{1.5}带入到公式\ref{1.4}中
+<script type="math/tex; mode=display">
+   \frac{\partial c_{i}}{\partial t} = 
+   \frac
+     {u_{x_{i-1/2}}^t \times c_{x_{i-1/2}}^t - 
+      u_{x_{i+1/2}}^t \times c_{x_{i+1/2}}^t}
+     {\Delta x}
+   \tag {1.6} 
+</script>
+</p>
+<p>WRF等数值模式一般采用荒川网格计算风场，因此<script type="math/tex">u_{x_{i-1/2}}^t</script>和<script type="math/tex">u_{x_{i+1/2}}^t</script>为已知量（如果是插值得到，那么可能会存在误差）。</p>
+<p>再对时间进行离散化，如果采用简单的显示欧拉方法，则公式变为：</p>
+<p>
+<script type="math/tex; mode=display">
+   \frac{c_{x_{i}}^{t+1}-c_{x_{i}}^{t}}{\Delta t} = 
+   \frac
+     {u_{x_{i-1/2}}^t \times c_{x_{i-1/2}}^t - 
+     u_{x_{i+1/2}}^t \times c_{x_{i+1/2}}^t}
+     {\Delta x}
+   \tag {1.7}
+</script>
+</p>
+<p>整理一下：</p>
+<p>
+<script type="math/tex; mode=display">
+   c_{x_{i}}^{t+1} = c_{x_{i}}^{t} + 
+   (\frac
+     {u_{x_{i-1/2}}^t \times c_{x_{i-1/2}}^t - 
+        u_{x_{i+1/2}}^t \times c_{x_{i+1/2}}^t}
+     {\Delta x}) 
+   \times 
+   {\Delta t}
+   \tag {1.8} \label {1.8}
+</script>
+</p>
+<p>由以上公式可知，平流方案最关键的步骤就是如何获得边界处（stag网格）的浓度（当然最简单的方案就是插值）。</p>
+<p>似乎这个公式就能较好的求解出平流对浓度的影响，如果仔细想想，我们会面对四个额外的问题。</p>
+<p>首先，我们观察等号右边的中间项（把括号展开, 并稍加整理）
+<script type="math/tex; mode=display">
+   (\frac
+      {u_{x_{i-1/2}}^t \times {\Delta t}} 
+      {\Delta x}) 
+   \times 
+   c_{x_{i-1/2}}^t
+   \tag {1.9} \label {1.9}
+</script>
+</p>
+<p>我们需要意识到，公式\ref{1.9}中存在一个假设，该公司计算的浓度增量是从格子<script type="math/tex">i-1</script> 吹到格子<script type="math/tex">i</script> ，注意这个增量会最终叠加在格子<script type="math/tex">i</script> 中，公式1.8中只涉及到<script type="math/tex">c_{x_{i}}</script> 的计算，那么有没有一种可能。风速太大了，吹出了格子<script type="math/tex">i</script> 呢！</p>
+<p>当然有可能，所以我们要对数值求解方案施加限制</p>
+<p>
+<script type="math/tex; mode=display">
+\frac
+      {u_{x_{i-1/2}}^t \times {\Delta t}} 
+      {\Delta x}
+< 1 \tag {1.10}
+</script>
+</p>
+<p>这就是 <strong>Courant-Friedrichs-Lewy（CFL）</strong> 条件。</p>
+<p>我们在设置<script type="math/tex">{\Delta x}</script> 的时候，应该尽量保证这个条件，这样积分才具有稳定性。</p>
+<p>另外一个我们需要关注的问题是数值扩散，由于充分混合的假设，很容易使得平流方案计算的扩散速度大于物理上的实际扩散速度，想像一下一个格子很大，比如 <script type="math/tex">81km*81km</script> ，从西边界吹入一个高浓度的值，这个高浓度值会瞬间在整个格子里面混合，也就是说这个增量一下就会吹到东边界，肯定比实际扩散的要快一些（因此如何获得边界上的值，是一个比较有挑战的事情，好的方案可以减缓数值扩散）。</p>
+<p>然后我们需要关注的事情是质量的一致性，空气质量模式往往采用离线模拟的方式（气象场先模拟，再模拟CTM），并且CTM的网格和原始的气象网格存在差异，不同的离散方案(时间和空间)和插值都会导致质量一致性的出现问题。</p>
+<p>为什么空气密度的误差，会影响浓度平流过程计算的质量一致性问题呢？</p>
+<p>如果用质量混合比来表示平流方程
+设<script type="math/tex">C = \frac {c}{\rho}</script>
+</p>
+<p>那么(链式法则 =&gt; 带入公式\ref{1.1} =&gt; 带入C的定义 =&gt; 链式法则)
+<script type="math/tex; mode=display">
+    \frac{\partial C}{\partial t} 
+    = 
+      \frac{1}{\rho}\frac{\partial c}{\partial t}
+      - \frac{c}{\rho^2}\frac{\partial \rho}{\partial t}
+    = 
+      -\frac{\nabla \cdot (\mathbf{v}c)}{\rho}
+      + \frac{c}{\rho^2} {\nabla \cdot (\mathbf{v} \rho)}
+</script>
+</p>
+<p>
+<script type="math/tex; mode=display">
+    = {-\frac{\nabla \cdot (\rho \mathbf{v}C)
+              + C{\nabla \cdot (\mathbf{v} \rho)}}
+            {\rho}}
+</script>
+</p>
+<p>
+<script type="math/tex; mode=display">
+    = -( \mathbf{v} \cdot \nabla C + 
+         \frac{C}{\rho} {\nabla \cdot (\mathbf{v} \rho)})
+      + \frac{C}{\rho} {\nabla \cdot (\mathbf{v} \rho)}
+    = - \mathbf{v} \cdot \nabla C
+    \tag {1.11}
+</script>
+</p>
+<p>注意最终的结论是
+<script type="math/tex; mode=display">
+    \frac{\partial C}{\partial t} 
+    = - \mathbf{v} \cdot \nabla C
+    \tag {1.12} \label {1.12} 
+</script>
+</p>
+<p>要满足质量守恒，公式\ref{1.12}只有唯一的一个解，就是<script type="math/tex">C(t) = k</script>，其中<script type="math/tex">k</script> 为常数，也就是说，污染物浓度的变化要和密度变化协调一致（其实很好理解，浓度和空气密度都是同样的方程支配这平流，变化的步调应该是协调一致的）。</p>
+<p>最后我们需要关注的事情是质量守恒性，不能因为平流过程的计算，增加或者减少了物质，平流只是把物质从一个地方输送到另一个地方。质量不守恒一般是怎么引发的呢？</p>
+    </div>
+  </div>
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              atom
+ was developed by Linhong Xiao<br>              &copy; 2024 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>
