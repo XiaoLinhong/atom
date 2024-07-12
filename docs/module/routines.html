@@ -10,7 +10,7 @@
     <meta name="author" content="Linhong Xiao" >
     <link rel="icon" href="../favicon.png">
 
-    <title>ppm &ndash; atom</title>
+    <title>routines &ndash; atom</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -63,8 +63,8 @@
 
     <div class="container">
   <div class="row">
-    <h1>ppm
-      <small>Subroutine</small>
+    <h1>routines
+      <small>Module</small>
       
     </h1>
       <div class="container p-2 mb-4 bg-light border rounded-3">
@@ -74,7 +74,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="100.0% of total for procedures.">77 statements</a>
+                 title="100.0% of total for modules and submodules.">81 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -87,8 +87,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
                 <li class="breadcrumb-item"><a href='..\sourcefile\module_routine.f90.html'>module_routine.f90</a></li>
-                <li class="breadcrumb-item"><a href='..\module\routines.html'>routines</a></li>
-            <li class="breadcrumb-item active" aria-current="page">ppm</li>
+            <li class="breadcrumb-item active" aria-current="page">routines</li>
           </ol>
         </nav>
       </div>
@@ -101,10 +100,10 @@
   </script>
 
   </div>
-  
+
   <div class="row">
-    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-      <div id="sidebar">
+    <div class="col-md-3">
+        <div id="sidebar">
       <h3>Contents</h3>
   
   
@@ -118,7 +117,18 @@
   
   
   
-  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#subs-0"
+         aria-expanded="false" aria-controls="subs-0">
+         <h4 class="card-header bg-primary text-white">Subroutines</h4>
+      </a>
+      <div id="subs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/routines.html#proc-ppm">ppm</a>
+        </div>
+      </div>
+    </div>
+
   
   
   
@@ -131,17 +141,36 @@
   </div>
 
     </div>
-    
+
     <div class="col-md-9" id='text'>
-    <h2>public  subroutine ppm(dt, dx, nn, area, areav, v, conc, flux)  
-</h2>
-    
+      <p>performs advection using the one-dimensional implementation 
+ of the piecewise parabolic method (分段抛物型方法) of Colella and Woodward (1984).
+ A piecewise continuous parabola is used as the intepolation polynomial.
+ The slope of the parabola at cell edges is computed from a cumulative
+ function of the advected quantity. These slopes are further modified
+ so that the interpolation function is monotone.</p>
+      
+      
+      <br>
 
-    <p>一维平流函数</p>
 
 
-    <h3>Arguments</h3>
-        <table class="table table-striped varlist">
+
+
+
+
+
+        <section>
+          <h2>Subroutines</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-ppm"></span> <h3>public  subroutine <a href='..\proc\ppm.html'>ppm</a>(dt, dx, nn, area, areav, v, conc, flux)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>一维平流函数</p>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
     <thead>
       <tr>
         <th scope="col">Type</th>
@@ -153,7 +182,7 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-dt"></span>
+              <span class="anchor" id="variable-dt~2"></span>
               real,
             </td>
 <td>intent(in)</td>
@@ -163,12 +192,12 @@
             <td>::</td>
             <td><strong>dt</strong></td>
             <td>
-                <p>时间间隔: s</p>
+<p>时间间隔: s</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-dx"></span>
+              <span class="anchor" id="variable-dx~2"></span>
               real,
             </td>
 <td>intent(in)</td>
@@ -178,7 +207,7 @@
             <td>::</td>
             <td><strong>dx</strong></td>
             <td>
-                <p>网格分辨率: m</p>
+<p>网格分辨率: m</p>
             </td>
         </tr>
         <tr>
@@ -193,7 +222,7 @@
             <td>::</td>
             <td><strong>nn</strong></td>
             <td>
-                <p>网格数</p>
+<p>网格数</p>
             </td>
         </tr>
         <tr>
@@ -208,7 +237,7 @@
             <td>::</td>
             <td><strong>area</strong></td>
             <td>
-                
+
             </td>
         </tr>
         <tr>
@@ -223,12 +252,12 @@
             <td>::</td>
             <td><strong>areav</strong></td>
             <td>
-                
+
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-v"></span>
+              <span class="anchor" id="variable-v~2"></span>
               real,
             </td>
 <td>intent(in)</td>
@@ -238,12 +267,12 @@
             <td>::</td>
             <td><strong>v</strong>(nn)</td>
             <td>
-                <p>风速: m/s</p>
+<p>风速: m/s</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-conc"></span>
+              <span class="anchor" id="variable-conc~2"></span>
               real,
             </td>
 <td>intent(inout)</td>
@@ -253,7 +282,7 @@
             <td>::</td>
             <td><strong>conc</strong>(nn)</td>
             <td>
-                <p>网格浓度: umol/m3</p>
+<p>网格浓度: umol/m3</p>
             </td>
         </tr>
         <tr>
@@ -268,25 +297,21 @@
             <td>::</td>
             <td><strong>flux</strong>(nn)</td>
             <td>
-                <p>Conc change from interfacial mass flux: umol/m3</p>
+<p>Conc change from interfacial mass flux: umol/m3</p>
             </td>
         </tr>
     </tbody>
   </table>
 
-    <br>
 
+    </div>
+  </div>
 
-    
-    
-
-    
-    
+        </section>
+        <br>
 
 
 
-    
-    
     </div>
   </div>
 

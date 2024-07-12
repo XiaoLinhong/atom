@@ -1,4 +1,4 @@
-title: 第三章 平流输送
+title: 第一章 平流输送
 copy_subdir: ../images
 ---
 
@@ -171,3 +171,11 @@ WRF等数值模式一般采用荒川网格计算风场，因此\(u_{x_{i-1/2}}^t
 要满足质量守恒，公式\ref{1.12}只有唯一的一个解，就是\(C(t) = k\)，其中\(k\) 为常数，也就是说，污染物浓度的变化要和密度变化协调一致（其实很好理解，浓度和空气密度都是同样的方程支配这平流，变化的步调应该是协调一致的）。
 
 最后我们需要关注的事情是质量守恒性，不能因为平流过程的计算，增加或者减少了物质，平流只是把物质从一个地方输送到另一个地方。质量不守恒一般是怎么引发的呢？
+
+
+@note
+
+1. camx手册
+
+2. Sportisse B. Fundamentals in air pollution: from processes to modelling[M]. Springer Science & Business Media, 2009.
+@endnote

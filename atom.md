@@ -1,5 +1,6 @@
 ---
 project: atom
+favicon: images/favicon.jpg
 summary: 一个FORTRAN现代化开发的模板仓，展示如何使用软件工程工具进行科学计算开发
 author: Linhong Xiao
 project_github: https://github.com/XiaoLinhong/atom

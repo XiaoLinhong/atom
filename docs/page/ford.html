@@ -10,7 +10,7 @@
     <meta name="author" content="Linhong Xiao" >
     <link rel="icon" href="../favicon.png">
 
-    <title>第一章 包管理器 &ndash; atom</title>
+    <title>第三章 文档生成 &ndash; atom</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -63,7 +63,7 @@
 
     <div class="container">
   <div class="row">
-    <h1>第一章 包管理器</h1>
+    <h1>第三章 文档生成</h1>
     <div class="container p-2 mb-4 bg-light border rounded-3">
       <div class="row align-items-center justify-content-between">
         <div class="col">
@@ -74,7 +74,7 @@
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb justify-content-end mb-0">
                 <li class="breadcrumb-item"><a href='index.html'>FORTRAN工程化实践</a></li>
-              <li class="breadcrumb-item active" aria-current="page">第一章 包管理器</li>
+              <li class="breadcrumb-item active" aria-current="page">第三章 文档生成</li>
             </ol>
           </nav>
         </div>
@@ -92,77 +92,56 @@
           </ul>
           <hr>
           <nav class="nav nav-pills flex-column">
-              <a class="nav-link active disabled" href="fpm.html">第一章 包管理器</a>
-              <a class="nav-link" href="ford.html">第二章 文档生成</a>
               <a class="nav-link" href="ppm.html">第一章 平流输送</a>
+              <a class="nav-link" href="fpm.html">第二章 包管理器</a>
+              <a class="nav-link active disabled" href="ford.html">第三章 文档生成</a>
+              <a class="nav-link" href="docs.html">第四章 部署文档</a>
           </nav>
         </div>
       </div>
 
     <div class="col-9" id='text'>
-      <p><a href="https://github.com/fortran-lang/fpm">fpm（Fortran Package Manager）</a>是一个专门为Fortran语言设计的包管理工具，旨在简化Fortran项目的依赖管理、构建和发布过程。</p>
-<p>主要特点和优势：</p>
+      <h3>简介</h3>
+<p>写文档一直都是程序员的噩梦，特别是在word文档里面编辑。</p>
+<p>代码总是确定性的描述，而文字则是充满了歧义。当时看代码总是痛苦的，因为代码是给编译器看的，所以我们一定是需要文档的。</p>
+<p>如何减少写文档的痛苦，当前的最佳文档实践方式是在实现代码的同时，在代码的相同位置，以注释的方式去进行文档的编写。</p>
+<p>这样就引申出一个需求，如何把代码文件（一般为文本文件）中的以注释编辑的文档，以更加漂亮可读的方式呈现出来。</p>
+<p>这就是文档自动生成工具的由来，而目前最好的为fortran而生的文档生成工具就是<a href="https://github.com/Fortran-FOSS-Programmers/ford">ford</a></p>
+<p>ford采用<a href="https://markdown.com.cn/">Markdown</a>来编写纯文本格式的文档。</p>
+<p>ford的使用非常简单，只需要在代码仓的主目录中输入<code>ford proj.md</code>即可在当前目录产生HTML格式的文档，简单来说，ford会从<code>proj.md</code>（命名方式并不固定）读取一些代码仓的元数据信息（比如作者名称，简洁等等，也包含ford的一些配置信息），同时会解析代码仓主目录下的<code>src/*[fF]90</code>代码文件，会形成相关的链接结构（方便进行跳转）。当然ford也会额外的抽取一些特殊的注释文档，在后续会详细介绍。</p>
+<h3>在代码中编写文档</h3>
+<p>如果在写Fortran时，不写专门的文档注释，那么ford只是简单的把源代码（<code>*.f90</code>）、代码中的模块（<code>Module</code>）和模块中的过程体（<code>Module</code>）和模块中的一些独立单元（<code>subroutine, function, type</code>）和入口函数（<code>program</code>）解析出来，并形成链接。如果我们要告诉ford，对于某个对象，你应该额外的抽出一些注释，我们应该怎么做呢？</p>
+<p>用双感叹号<code>!!</code>来告诉ford（这个符号可以改变，但是一般来说没有必要），这是文档注释。而ford会忽略掉普通的感叹号<code>!</code>注释。 文档注释应该在标注代码之后（有些人喜欢在函数定义的前面写函数的注释，通过特殊的标注<code>!&gt;</code>也是可以支持的，不过不建议这样去做）。 </p>
+<div class="codehilite"><pre><span></span><code><span class="k">subroutine </span><span class="n">demo</span><span class="p">(</span><span class="n">cats</span><span class="p">,</span><span class="w"> </span><span class="n">dogs</span><span class="p">,</span><span class="w"> </span><span class="n">food</span><span class="p">,</span><span class="w"> </span><span class="n">angry</span><span class="p">)</span>
+<span class="w">    </span><span class="c">!! Feeds your cats and dogs, if enough food is available. If not enough</span>
+<span class="w">    </span><span class="c">!! food is available, some of your pets will get angry.</span>
+
+<span class="w">    </span><span class="c">! Arguments</span>
+<span class="w">    </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">cats</span>
+<span class="w">        </span><span class="c">!! The number of cats to keep track of.</span>
+<span class="w">    </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">dogs</span>
+<span class="w">        </span><span class="c">!! The number of dogs to keep track of.</span>
+<span class="w">    </span><span class="kt">real</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">food</span>
+<span class="w">        </span><span class="c">!! The ammount of pet food (in kilograms) which you have on hand.</span>
+<span class="w">    </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">angry</span>
+<span class="w">        </span><span class="c">!! The number of pets angry because they weren&#39;t fed.</span>
+
+<span class="w">    </span><span class="k">return</span>
+<span class="k">end subroutine </span><span class="n">demo</span>
+</code></pre></div>
+
+<p>对于比较长的文档块，可以使用<code>!*</code>作为第一条文档的注释。</p>
+<h3>注意实现</h3>
+<p>在用ford生成静态网页时，加上-o选项，指定输出的目录</p>
+<div class="codehilite"><pre><span></span><code>ford atom.md -o docs
+</code></pre></div>
+
+<div class="alert alert-info">
+<p class="alert-title h4">Note</p>
 <ol>
-<li>
-<p>简化的依赖管理：fpm允许Fortran项目定义和管理依赖关系，可以轻松地引入和使用外部库和模块，而无需手动下载和配置。</p>
-</li>
-<li>
-<p>fpm 鼓励采用现代化的项目结构，例如使用模块化的源代码组织方式，这有助于提高代码的可维护性和可扩展性。</p>
-</li>
-<li>
-<p>易于使用的命令行界面：fpm 提供了简单明了的命令行界面，使得项目的构建、测试和发布过程更加方便和高效。</p>
-</li>
-<li>
-<p>fpm 支持集成测试，可以帮助开发者编写和运行测试用例，确保代码的质量和稳定性。</p>
-</li>
+<li><a href="https://forddocs.readthedocs.io/en/latest/user_guide/getting_started.html">ford手册</a></li>
 </ol>
-<hr>
-<h3>使用fpm的基本流程</h3>
-<hr>
-<ul>
-<li>初始化一个新项目</li>
-</ul>
-<div class="codehilite"><pre><span></span><code>fpm<span class="w"> </span>new<span class="w"> </span>ppm
-</code></pre></div>
-
-<ul>
-<li>编辑项目描述文件</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ppm&quot;</span>
-<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0.1.0&quot;</span>
-<span class="n">license</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;license&quot;</span>
-<span class="n">author</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;xiaolh&quot;</span>
-<span class="n">maintainer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;xiaolh@3clear.com&quot;</span>
-<span class="n">copyright</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Copyright 2024, xiaolh&quot;</span>
-
-<span class="k">[build]</span>
-<span class="n">auto-executables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
-<span class="n">auto-tests</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
-<span class="n">auto-examples</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
-<span class="n">module-naming</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
-
-<span class="k">[install]</span>
-<span class="n">library</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
-
-<span class="k">[fortran]</span>
-<span class="n">implicit-typing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
-<span class="n">implicit-external</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
-<span class="n">source-form</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;free&quot;</span>
-
-<span class="k">[dependencies]</span>
-<span class="n">stdlib</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;*&quot;</span>
-
-<span class="k">[dev-dependencies]</span>
-<span class="n">test-drive</span><span class="p">.</span><span class="n">git</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;https://github.com/fortran-lang/test-drive&quot;</span>
-<span class="n">test-drive</span><span class="p">.</span><span class="n">tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;v0.4.0&quot;</span>
-</code></pre></div>
-
-<ul>
-<li>构建和测试项目</li>
-</ul>
-<div class="codehilite"><pre><span></span><code>fpm<span class="w"> </span>build
-fpm<span class="w"> </span><span class="nb">test</span>
-</code></pre></div>
+</div>
     </div>
   </div>
       <hr>

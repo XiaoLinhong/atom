@@ -122,10 +122,3 @@ contains
    end subroutine xyadv
 
 end module routines
-
-
-
-area_of_face(i) = dy*(depth(i,j,k) + depth(i+1,j,k))/(mapscl(i,j) + mapscl(i+1,j))
-area_of_cell(i) = mapscl(i, j)*mapscl(i, j)/(dy*depth(i,j,k))
-
-
