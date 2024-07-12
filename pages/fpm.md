@@ -1,6 +1,10 @@
 title: 第二章 包管理器
 ---
 
+@warning 万丈高楼平地起
+
+### 简介
+
 [fpm（Fortran Package Manager）](https://github.com/fortran-lang/fpm)是一个专门为Fortran语言设计的包管理工具，旨在简化Fortran项目的依赖管理、构建和发布过程。
 
 主要特点和优势：
@@ -69,7 +73,5 @@ fpm test
 
 @note
 
-1. cargo
-
-2. fpm手册
+- [fpm手册](https://fpm.fortran-lang.org/)
 @endnote

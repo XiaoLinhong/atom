@@ -1,6 +1,8 @@
 title: 第三章 文档生成
 ---
 
+@warning 用正确的方式，做正确的事情
+
 ### 简介
 写文档一直都是程序员的噩梦，特别是在word文档里面编辑。
 
@@ -15,6 +17,9 @@ title: 第三章 文档生成
 ford采用[Markdown](https://markdown.com.cn/)来编写纯文本格式的文档。
 
 ford的使用非常简单，只需要在代码仓的主目录中输入``` ford proj.md ```即可在当前目录产生HTML格式的文档，简单来说，ford会从```proj.md```（命名方式并不固定）读取一些代码仓的元数据信息（比如作者名称，简洁等等，也包含ford的一些配置信息），同时会解析代码仓主目录下的```src/*[fF]90```代码文件，会形成相关的链接结构（方便进行跳转）。当然ford也会额外的抽取一些特殊的注释文档，在后续会详细介绍。
+
+### 编写全局说明文档
+很多时候，我们需要为一个仓写一些**全局**的说明性文档，也有可能针对某个复杂的函数，需要很多文档进行
 
 ### 在代码中编写文档
 如果在写Fortran时，不写专门的文档注释，那么ford只是简单的把源代码（```*.f90```）、代码中的模块（```Module```）和模块中的过程体（```Module```）和模块中的一些独立单元（```subroutine, function, type```）和入口函数（```program```）解析出来，并形成链接。如果我们要告诉ford，对于某个对象，你应该额外的抽出一些注释，我们应该怎么做呢？
@@ -50,6 +55,10 @@ ford atom.md -o docs
 ```
 
 @note
-1. [ford手册](https://forddocs.readthedocs.io/en/latest/user_guide/getting_started.html)
+- [markdown](https://markdown.com.cn/basic-syntax/)
+
+- [latex 语法](https://ashki23.github.io/markdown-latex.html)
+
+- [ford手册](https://forddocs.readthedocs.io/en/latest/user_guide/getting_started.html)
 @endnote
 

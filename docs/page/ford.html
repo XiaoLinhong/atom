@@ -101,7 +101,11 @@
       </div>
 
     <div class="col-9" id='text'>
-      <h3>简介</h3>
+      <div class="alert alert-warning">
+<p class="alert-title h4">Warning</p>
+<p>用正确的方式，做正确的事情</p>
+</div>
+<h3>简介</h3>
 <p>写文档一直都是程序员的噩梦，特别是在word文档里面编辑。</p>
 <p>代码总是确定性的描述，而文字则是充满了歧义。当时看代码总是痛苦的，因为代码是给编译器看的，所以我们一定是需要文档的。</p>
 <p>如何减少写文档的痛苦，当前的最佳文档实践方式是在实现代码的同时，在代码的相同位置，以注释的方式去进行文档的编写。</p>
@@ -109,6 +113,8 @@
 <p>这就是文档自动生成工具的由来，而目前最好的为fortran而生的文档生成工具就是<a href="https://github.com/Fortran-FOSS-Programmers/ford">ford</a></p>
 <p>ford采用<a href="https://markdown.com.cn/">Markdown</a>来编写纯文本格式的文档。</p>
 <p>ford的使用非常简单，只需要在代码仓的主目录中输入<code>ford proj.md</code>即可在当前目录产生HTML格式的文档，简单来说，ford会从<code>proj.md</code>（命名方式并不固定）读取一些代码仓的元数据信息（比如作者名称，简洁等等，也包含ford的一些配置信息），同时会解析代码仓主目录下的<code>src/*[fF]90</code>代码文件，会形成相关的链接结构（方便进行跳转）。当然ford也会额外的抽取一些特殊的注释文档，在后续会详细介绍。</p>
+<h3>编写全局说明文档</h3>
+<p>很多时候，我们需要为一个仓写一些<strong>全局</strong>的说明性文档，也有可能针对某个复杂的函数，需要很多文档进行</p>
 <h3>在代码中编写文档</h3>
 <p>如果在写Fortran时，不写专门的文档注释，那么ford只是简单的把源代码（<code>*.f90</code>）、代码中的模块（<code>Module</code>）和模块中的过程体（<code>Module</code>）和模块中的一些独立单元（<code>subroutine, function, type</code>）和入口函数（<code>program</code>）解析出来，并形成链接。如果我们要告诉ford，对于某个对象，你应该额外的抽出一些注释，我们应该怎么做呢？</p>
 <p>用双感叹号<code>!!</code>来告诉ford（这个符号可以改变，但是一般来说没有必要），这是文档注释。而ford会忽略掉普通的感叹号<code>!</code>注释。 文档注释应该在标注代码之后（有些人喜欢在函数定义的前面写函数的注释，通过特殊的标注<code>!&gt;</code>也是可以支持的，不过不建议这样去做）。 </p>
@@ -138,9 +144,17 @@
 
 <div class="alert alert-info">
 <p class="alert-title h4">Note</p>
-<ol>
-<li><a href="https://forddocs.readthedocs.io/en/latest/user_guide/getting_started.html">ford手册</a></li>
-</ol>
+<ul>
+<li>
+<p><a href="https://markdown.com.cn/basic-syntax/">markdown</a></p>
+</li>
+<li>
+<p><a href="https://ashki23.github.io/markdown-latex.html">latex 语法</a></p>
+</li>
+<li>
+<p><a href="https://forddocs.readthedocs.io/en/latest/user_guide/getting_started.html">ford手册</a></p>
+</li>
+</ul>
 </div>
     </div>
   </div>

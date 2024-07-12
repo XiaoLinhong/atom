@@ -101,19 +101,49 @@
       </div>
 
     <div class="col-9" id='text'>
-      <p>通过ford，可以以静态网页（HTML）的方式组织文档。</p>
-<p>有两个部署静态网页的平台值得推荐。
-- github pages
-- Netlify</p>
+      <div class="alert alert-warning">
+<p class="alert-title h4">Warning</p>
+<p>工具是第一生产力</p>
+</div>
+<h3>简介</h3>
+<p>ford基于代码中的文档和全局文档，自动生成静态网页（HTML）。这些网页最后需要部署在HTTP服务上，才能进行分享。</p>
+<p>有两个部署静态网页的平台值得推荐。</p>
+<ul>
+<li>github pages</li>
+<li>Netlify</li>
+</ul>
 <h3>github pages</h3>
+<p>打开一个仓，按照setting里面的步骤提示一步一步进行基本就可以完成配置。</p>
+<ol>
+<li>在设置(setting)里面, 找到pages，并开启</li>
+<li>设置要部署的分支；并设置目录，一般为<code>./docs</code></li>
+<li>设置域名名称，一般产生的URL为<code>https://username.github.io/something</code></li>
+<li>在代码仓中生成docs目录（Fortran里面用ford去做）</li>
+<li>把仓推送到GitHub，即可访问文档的URL</li>
+</ol>
+<p>高级功能可以查看<a href="https://docs.github.com/zh/pages">GitHub Pages</a></p>
+<h3>Netlify</h3>
+<p><a href="https://app.netlify.com/">Netlify</a>的部署也是比较简单，</p>
+<p>可以使用github账户登录Netlify，有一个引导页面，一步一步操作即可</p>
+<p>有以下几项需要注意</p>
+<ol>
+<li>
+<p>用GitHub账号登录Netlify之后，GitHub上面会安装名为Netlify的Application。</p>
+</li>
+<li>
+<p>在引导页面中Netlify会要求获取账号下面的所有仓的只读访问权限，可以选择只给部分仓的权限。后面需要添加新仓的支持的时候，可以在GitHub上进行设置。也可以点击Netlify中的<code>Add new site</code>中的导入一个新仓，这个操作会弹出一个引导页面，选择GitHub，然后添加账户名下的<code>Add another organization</code>，这样会跳转到
+GitHub的Application设置页面。</p>
+</li>
+</ol>
+<p>高级功能可以查看<a href="https://docs.netlify.com/">Netlify 文档</a></p>
 <div class="alert alert-info">
 <p class="alert-title h4">Note</p>
 <ol>
 <li>
-<p>github手册</p>
+<p><a href="https://docs.github.com/zh/pages">GitHub Pages</a></p>
 </li>
 <li>
-<p>fpm手册</p>
+<p><a href="https://app.netlify.com/">Netlify 主页</a></p>
 </li>
 </ol>
 </div>

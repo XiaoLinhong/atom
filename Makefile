@@ -72,7 +72,7 @@ ifeq ($(MAKECMDGOALS), test)
     EXE = $(WORK_DIR)/$(test)
 endif
 
-$(shell ./deps $(SRCS) > $(DST_DIR)/Makefile.dep)
+$(shell ./tool/deps $(SRCS) > $(DST_DIR)/Makefile.dep)
 
 # link the program
 $(EXE): $(OBJS)
