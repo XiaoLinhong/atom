@@ -1,6 +1,6 @@
 module routines
    !* performs advection using the one-dimensional implementation 
-   !  of the piecewise parabolic method (分段抛物型方法) of Colella and Woodward (1984).
+   !  of the piecewise parabolic method (分段多项式法) of Colella and Woodward (1984).
    !  A piecewise continuous parabola is used as the intepolation polynomial.
    !  The slope of the parabola at cell edges is computed from a cumulative
    !  function of the advected quantity. These slopes are further modified
@@ -10,21 +10,20 @@ module routines
 
 contains
 
-   subroutine ppm(dt, dx, nn, area, areav, v, conc, flux)
+   subroutine ppm(dt, dx, nn, area_of_cell, area_of_face, v, conc, flux)
       !! 一维平流函数
-      implicit none
-
       ! args
       real, intent(in) :: dt !! 时间间隔: s
       real, intent(in) :: dx !! 网格分辨率: m
       integer, intent(in) :: nn !! 网格数
-      real, intent(in) :: area_of_cell(nn) !! Cell area adjustment vector: 1/m2
+      real, intent(in) :: area_of_cell(nn) 
+        !! Cell area adjustment vector: 1/m2
+        !! 
       real, intent(in) :: area_of_face(nn) !! Interfacial area adjustment vector: m2
-      real, intent(in)    :: v(nn) !! 风速: m/s
+      real, intent(in) :: v(nn) !! 风速: m/s
 
       real, intent(inout) :: conc(nn) !! 网格浓度: umol/m3
       real, intent(out) :: flux(nn) !! Conc change from interfacial mass flux: umol/m3
-
 
       ! local
       real, parameter :: TWO3RDS = 2./3.
@@ -116,7 +115,6 @@ contains
       do i=2, nn-1
          flux(i) = (fp(i) - fm(i+1))
          conc(i) = conc(i) - (flux(i) - flux(i-1)) ! 公式1.13
-
          ! conc(i) = conc(i) - area_of_cell(i)*(area_of_face(i)*flux(i) - area_of_face(i-1)*flux(i-1))
       end do
    end subroutine xyadv

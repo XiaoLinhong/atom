@@ -74,7 +74,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="100.0% of total for procedures.">77 statements</a>
+                 title="100.0% of total for procedures.">76 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -133,7 +133,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>public  subroutine ppm(dt, dx, nn, area, areav, v, conc, flux)  
+    <h2>public  subroutine ppm(dt, dx, nn, area_of_cell, area_of_face, v, conc, flux)  
 </h2>
     
 
@@ -153,7 +153,7 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-dt~2"></span>
+              <span class="anchor" id="variable-dt"></span>
               real,
             </td>
 <td>intent(in)</td>
@@ -168,7 +168,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-dx~2"></span>
+              <span class="anchor" id="variable-dx"></span>
               real,
             </td>
 <td>intent(in)</td>
@@ -198,37 +198,37 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-area"></span>
-              real
+              <span class="anchor" id="variable-area_of_cell"></span>
+              real,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>area</strong></td>
+            <td><strong>area_of_cell</strong>(nn)</td>
             <td>
-                
+                <p>Cell area adjustment vector: 1/m2</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-areav"></span>
-              real
+              <span class="anchor" id="variable-area_of_face"></span>
+              real,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>areav</strong></td>
+            <td><strong>area_of_face</strong>(nn)</td>
             <td>
-                
+                <p>Interfacial area adjustment vector: m2</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-v~2"></span>
+              <span class="anchor" id="variable-v"></span>
               real,
             </td>
 <td>intent(in)</td>
@@ -243,7 +243,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-conc~2"></span>
+              <span class="anchor" id="variable-conc"></span>
               real,
             </td>
 <td>intent(inout)</td>

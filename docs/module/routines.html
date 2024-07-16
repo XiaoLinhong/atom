@@ -74,7 +74,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="100.0% of total for modules and submodules.">81 statements</a>
+                 title="100.0% of total for modules and submodules.">80 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -144,7 +144,7 @@
 
     <div class="col-md-9" id='text'>
       <p>performs advection using the one-dimensional implementation 
- of the piecewise parabolic method (分段抛物型方法) of Colella and Woodward (1984).
+ of the piecewise parabolic method (分段多项式法) of Colella and Woodward (1984).
  A piecewise continuous parabola is used as the intepolation polynomial.
  The slope of the parabola at cell edges is computed from a cumulative
  function of the advected quantity. These slopes are further modified
@@ -163,7 +163,7 @@
         <section>
           <h2>Subroutines</h2>
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-ppm"></span> <h3>public  subroutine <a href='..\proc\ppm.html'>ppm</a>(dt, dx, nn, area, areav, v, conc, flux)  
+    <div class="card-header codesum"><span class="anchor" id="proc-ppm"></span> <h3>public  subroutine <a href='..\proc\ppm.html'>ppm</a>(dt, dx, nn, area_of_cell, area_of_face, v, conc, flux)  
 </h3></div>
     <div class="card-body">
           
@@ -182,7 +182,7 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-dt~2"></span>
+              <span class="anchor" id="variable-dt"></span>
               real,
             </td>
 <td>intent(in)</td>
@@ -197,7 +197,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-dx~2"></span>
+              <span class="anchor" id="variable-dx"></span>
               real,
             </td>
 <td>intent(in)</td>
@@ -227,37 +227,37 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-area"></span>
-              real
+              <span class="anchor" id="variable-area_of_cell"></span>
+              real,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>area</strong></td>
+            <td><strong>area_of_cell</strong>(nn)</td>
             <td>
-
+<p>Cell area adjustment vector: 1/m2</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-areav"></span>
-              real
+              <span class="anchor" id="variable-area_of_face"></span>
+              real,
             </td>
-<td></td>
+<td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>areav</strong></td>
+            <td><strong>area_of_face</strong>(nn)</td>
             <td>
-
+<p>Interfacial area adjustment vector: m2</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-v~2"></span>
+              <span class="anchor" id="variable-v"></span>
               real,
             </td>
 <td>intent(in)</td>
@@ -272,7 +272,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-conc~2"></span>
+              <span class="anchor" id="variable-conc"></span>
               real,
             </td>
 <td>intent(inout)</td>
