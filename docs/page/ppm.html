@@ -260,7 +260,7 @@
 </div>
 <h3>3. 分段多项式平流方案</h3>
 <p>分段多项式平流方案（Piecewise Parabolic Method，PPM）是一种用于求解流体动力学方程的数值方法，特别是在处理高分辨率、具有激波等间断的流体问题时表现出色。</p>
-<p>PPM具有二阶精度，广泛用于主流的空气质量模式中（CMAQ、CAMx 等）。该方案适用于<strong>非结构化网格</strong>（结构化网格只是非结构化网格的特例），为了思路更加、简单清楚，在本文档的推导过程中，只采用等网格间距的设定，且只考虑一维的情况。</p>
+<p>PPM具有三阶精度，广泛用于主流的空气质量模式中（CMAQ、CAMx 等）。该方案适用于<strong>非结构化网格</strong>（结构化网格只是非结构化网格的特例），为了思路更加、简单清楚，在本文档的推导过程中，只采用等网格间距的设定，且只考虑一维的情况。</p>
 <p>在浓度的离散表示中，网格浓度为该网格的平均浓度。根据定义，我们得到以下公式
 <script type="math/tex; mode=display">
     c_i^n
@@ -348,7 +348,7 @@
 <div class="alert alert-info">
 <p class="alert-title h4">Note</p>
 <p>为什么是四次多项式，而不是三次多项式呢？</p>
-<p>因为<script type="math/tex">c_x</script> 在<script type="math/tex">x</script> 上的分布是分段抛物线，抛物线的积分是三次，而分段抛物线的积分是四次！</p>
+<p>因为<script type="math/tex">c_x</script> 在<script type="math/tex">x</script> 上的分布是分段抛物线，抛物线的积分是三次，而分段抛物线的积分是四次（边界处的浓度，相当于是三次多项式）！</p>
 </div>
 <p>我们首先定义浓度在空间的积分函数：
 <script type="math/tex; mode=display">
@@ -408,8 +408,8 @@
   \tag {2.8} \label {2.8}
 \end{align*}</script>
 </p>
-<p>其中<script type="math/tex">\delta c_{i} = 0.5(c_{i+1} - c_{i-1})</script> 为第<script type="math/tex">i</script> 个格子的平均斜率（为什么？）。</p>
-<p>通过下面定义的<script type="math/tex">\delta_m c_{i}</script> 替换 <script type="math/tex">\delta c_{i}</script> 。
+<p>其中<script type="math/tex">\delta c_{i} = 0.5(c_{i+1} - c_{i-1})</script> 为第<script type="math/tex">i</script> 个格子的平均斜率（三个网格连续变化的斜率？）。</p>
+<p>为了让浓度不连续的地方模拟得更好（steeper representation），同时保证了边界浓度在两个格子平均浓度之间（<strong>条件1，不人为创造极值，比如可能出现负数</strong>），用<script type="math/tex">\delta_m c_{i}</script> 来替换 <script type="math/tex">\delta c_{i}</script> 。
 <script type="math/tex; mode=display">
   \delta_m c_{i} = 
   \begin{cases}
@@ -420,15 +420,18 @@
   \tag {2.9} \label {2.9}
 </script>
 </p>
-<p>这么做的目的是为了让不连续性变得更加陡峭，同时保证了边界浓度在两个格子平均浓度之间（条件1），这样改完之后，网格按照<script type="math/tex">c_{x}</script> 积分计算的平均值就与给定的平均值不相等了（不需要一定相等，而且也破坏了边界处的连续性）。</p>
-<p>为了避免在间断处出现非物理的振荡，在PPM方案中，还有1个约束条件，在一个网格内，浓度的分布是单调的。</p>
+<p>该替换标准是如何获得的呢？</p>
+<p>我们把<script type="math/tex">c_{x_{i+1/2}}</script> 的约束条件（浓度值在左右两个格子的平均值之间）带入公式\ref{2.8}，可以得到一个约束<script type="math/tex">|\delta c_{i}-\delta c_{i+1}|<6|c_{i+1}-c_{i}|</script>。</p>
+<p>更强的一个约束是 <script type="math/tex">|\delta c_{i}|+|\delta c_{i+1}|<6|c_{i+1}-c_{i}|</script>，那么如果<script type="math/tex">|\delta c_{i}|<|3|c_{i+1}-c_{i}|</script>，且<script type="math/tex">|\delta c_{i+1}|<|3|c_{i}-c_{i-1}|</script>，约束条件一定会被满足（为什么PPM的条件会更强一些？）。</p>
+<p>注意，替换之后，网格按照<script type="math/tex">c_{x}</script> 积分计算的平均值就与给定的平均值不相等了（不需要一定相等，而且也破坏了边界处的连续性）。</p>
+<p>为了避免在间断处出现非物理的振荡（过冲和欠冲，出现这种情况，通量的计算就会变得比较极端，不知道是对是错），在PPM方案中，<strong>还有一个约束条件，在一个网格内，浓度的分布是单调的</strong>，避免人造极值，破坏物理的合理性，比如负数（网格平均浓度很低，边界浓度差异很大，为了保持抛物线的形态，并且平均值固定，那么就可能出现负值）。</p>
 <p>按照之前的公式，得到的<script type="math/tex">c_{x}</script> 不一定在<script type="math/tex">c_{x_{i-1/2}}</script> 和 <script type="math/tex">c_{x_{i+1/2}}</script>之间。</p>
 <ul>
 <li>
-<p>情况1: 关注格子的浓度<script type="math/tex">c_{x_{i}}</script>本身就是局地极值。插值函数设置为常数（就是在格子<script type="math/tex">i</script> 中浓度均为<script type="math/tex">c_{x_{i}}</script>）。</p>
+<p>情况1: 关注格子的浓度<script type="math/tex">c_{x_{i}}</script> 本身就是局地极值。插值函数设置为常数（就是在格子<script type="math/tex">i</script> 中浓度均为<script type="math/tex">c_{x_{i}}</script>）。</p>
 </li>
 <li>
-<p>情况2: 格子<script type="math/tex">i</script> 位于浓度梯度很大的地方，比如左边界比右边界浓度大很多，但是该格子的平均浓度与左边界接近，那么二次多项式会形成比边界浓度更大的值（为了抵消右边比平均值低很多的情况）。 这种现象被称为<a href="https://zh.wikipedia.org/wiki/%E8%BF%87%E5%86%B2">overshoot</a>（过充，或者超调，是指信号或者函数超过了预期值），发生overshoot时，左边界和有边界的值就会被重新设定，其判定条件为<script type="math/tex">|\Delta c_i| < |c_{6,i}|</script>，该条件通过对公式\ref{2.4}求导，判定恒大于0或者恒小于0得到。</p>
+<p>情况2: 格子<script type="math/tex">i</script> 位于浓度梯度很大的地方，比如左边界比右边界浓度大很多，但是该格子的平均浓度与左边界接近，那么二次多项式的曲线会形成比边界浓度更大的值（为了抵消右边比平均值低很多的情况），破坏了在一个格子里面的单调性。这种现象被称为<a href="https://zh.wikipedia.org/wiki/%E8%BF%87%E5%86%B2">overshoot</a>（过充，或者超调，是指信号或者函数超过了预期值），发生overshoot时，网格左边界和右边界的值就会被重新设定，其判定条件为<script type="math/tex">|\Delta c_i| < |c_{6,i}|</script>，该条件通过对公式\ref{2.4} 求导，判定恒大于0 或者恒小于0 得到。</p>
 </li>
 </ul>
 <p>
@@ -440,36 +443,38 @@
   \tag {2.10} \label {2.10}
 \end{align*}</script>
 </p>
-<p>其中，<script type="math/tex">c_{6,i} > 0</script>时，<script type="math/tex">c(x)</script>为凸函数，
-<script type="math/tex">c_{6,i} < 0</script>时，<script type="math/tex">c(x)</script>为凹函数函数，
-<script type="math/tex">c_{6,i} = 0</script>时，<script type="math/tex">c(x)</script>为线性函数，</p>
+<p>其中，<script type="math/tex">c_{6,i} > 0</script> 时，<script type="math/tex">c(x)</script> 为凸函数，
+<script type="math/tex">c_{6,i} < 0</script> 时，<script type="math/tex">c(x)</script> 为凹函数函数，
+<script type="math/tex">c_{6,i} = 0</script> 时，<script type="math/tex">c(x)</script> 为线性函数，</p>
 <p>
-<script type="math/tex">c_{6,i}</script> 与 <script type="math/tex">\Delta c_i</script>同符号时，且判定条件满足，<script type="math/tex">c_{i}</script>更靠近右边界浓度值。按照<script type="math/tex">c_{6,i}=\Delta c_i</script>，带入公式定义公式，求得左边界值，这时在<script type="math/tex">x_{i+1/2}</script>处(右边界)，<script type="math/tex">c(x)</script>的导数为0。</p>
+<script type="math/tex">c_{6,i}</script> 与 <script type="math/tex">\Delta c_i</script> 同符号时，且判定条件满足，<script type="math/tex">c_{i}</script> 更靠近右边界浓度值。按照<script type="math/tex">c_{6,i}=\Delta c_i</script>，带入公式定义公式，求得左边界值，这时在<script type="math/tex">x_{i+1/2}</script> 处(右边界)，<script type="math/tex">c(x)</script> 的导数为0。</p>
 <p>
-<script type="math/tex">c_{6,i}</script> 与 <script type="math/tex">\Delta c_i</script>符号相反时，且判定条件满足，<script type="math/tex">c_{i}</script>更靠近左边界浓度值。按照<script type="math/tex">c_{6,i}=-\Delta c_i</script>，带入公式定义公式，求得右边界值，这是在<script type="math/tex">x_{i-1/2}</script>处(右边界)，<script type="math/tex">c(x)</script>的导数为0</p>
-<p>如果发生了判定按照</p>
+<script type="math/tex">c_{6,i}</script> 与 <script type="math/tex">\Delta c_i</script> 符号相反时，且判定条件满足，<script type="math/tex">c_{i}</script> 更靠近左边界浓度值。按照<script type="math/tex">c_{6,i}=-\Delta c_i</script>，带入公式定义公式，求得右边界值，这是在<script type="math/tex">x_{i-1/2}</script> 处(左边界)，<script type="math/tex">c(x)</script> 的导数为0</p>
+<p>想象一下，如此处理之后，<script type="math/tex">c(x)</script> 在该网格中表现为抛物线的极值 连接边界处。</p>
+<p>注意通过该步骤进行替换之后，会破坏边界处的连续性，也就是左右极值不相等（似乎边界处的连续性不是很重要？）!</p>
 <hr>
-<p>得到边界处的值，就能较为容易地计算边界处的通量。在边界处的平均值为</p>
+<p>得到每个网格边界处的浓度值，就能较为容易地计算网格边界处的通量。在边界处传输的平均浓度为</p>
 <p>
 <script type="math/tex; mode=display">\begin{align*}
-f_{i+1/2, L}(y) &= \frac{1}{y} \int_{x_{i+1/2}-y}^{x_{i+1/2}}c(x)dx \\
-f_{i+1/2, R}(y) &= \frac{1}{y} \int_{x_{i+1/2}}^{x_{i+1/2}+y}c(x)dx 
+c_{i+1/2, L}(y) &= \frac{1}{y} \int_{x_{i+1/2}-y}^{x_{i+1/2}}c(x)dx \\
+c_{i+1/2, R}(y) &= \frac{1}{y} \int_{x_{i+1/2}}^{x_{i+1/2}+y}c(x)dx 
 \tag {2.11} \label {2.11}
 \end{align*}</script>
 </p>
-<p>其中<script type="math/tex">y</script> 假设为正数。将公式\ref{2.4} 带入，可以得到</p>
+<p>其中<script type="math/tex">y</script> 假设为正数，表示<script type="math/tex">c(x)</script> 在一次积分时间中，在空间上移动的距离（<script type="math/tex">y=|u\Delta t|</script>）。</p>
+<p>将公式\ref{2.4} 带入，可以得到</p>
 <p>
 <script type="math/tex; mode=display">\begin{align*}
-f_{i+1/2, L}(y) &= c_{x_{i+1/2}} - \frac{y}{2\Delta x}
+c_{i+1/2, L}(y) &= c_{x_{i+1/2}} - \frac{y}{2\Delta x}
 (c_{x_{i+1/2}} - c_{x_{i-1/2}} -(1-\frac{2y}{3\Delta x})c_{6,i}) \\
-f_{i+1/2, R}(y) &= c_{x_{i+1-1/2}} - \frac{y}{2\Delta x}
+c_{i+1/2, R}(y) &= c_{x_{i+1-1/2}} - \frac{y}{2\Delta x}
 (c_{x_{i+1+1/2}} - c_{x_{i+1-1/2}} -(1-\frac{2y}{3\Delta x})c_{6,i+1})
 \tag {2.12} \label {2.12}
 \end{align*}</script>
 </p>
 <p>对于第<script type="math/tex">i</script> 个格子，公式中的浓度变化代表了从右边传出（<script type="math/tex">i</script> 损失浓度），或者从右边传入的量（<script type="math/tex">i</script> 损失浓度），二者只有一种可能，这取决于风的方向。</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="n">init_printing</span><span class="p">()</span> <span class="c1"># 更好的打印</span>
+<span class="n">init_printing</span><span class="p">()</span>
 <span class="n">ci</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;c_i&quot;</span><span class="p">)</span>
 <span class="n">cLi</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;cL_i&quot;</span><span class="p">)</span>
 <span class="n">cRi</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;cR_i&quot;</span><span class="p">)</span>
@@ -483,26 +488,25 @@ f_{i+1/2, R}(y) &= c_{x_{i+1-1/2}} - \frac{y}{2\Delta x}
 
 <span class="n">y</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
 
-<span class="n">f</span> <span class="o">=</span> <span class="n">cLi</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">xLi</span><span class="p">)</span><span class="o">/</span><span class="n">dx</span><span class="o">*</span><span class="p">(</span><span class="n">cRi</span><span class="o">-</span><span class="n">cLi</span><span class="o">+</span> <span class="p">(</span><span class="n">xRi</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">dx</span><span class="o">*</span><span class="n">c6i</span> <span class="p">)</span>
-<span class="n">fR</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">xRi</span><span class="o">-</span><span class="n">y</span><span class="p">,</span> <span class="n">xRi</span><span class="p">))</span><span class="o">/</span><span class="n">y</span>
-
+<span class="n">f</span> <span class="o">=</span> <span class="n">cLi</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">xLi</span><span class="p">)</span><span class="o">/</span><span class="n">dx</span><span class="o">*</span><span class="p">(</span><span class="n">cRi</span><span class="o">-</span><span class="n">cLi</span><span class="o">+</span><span class="p">(</span><span class="n">xRi</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">dx</span><span class="o">*</span><span class="n">c6i</span> <span class="p">)</span> <span class="c1"># 公式2.4</span>
+<span class="n">fR</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">xRi</span><span class="o">-</span><span class="n">y</span><span class="p">,</span> <span class="n">xRi</span><span class="p">))</span><span class="o">/</span><span class="n">y</span> <span class="c1"># 在边界处进行积分</span>
+<span class="c1"># 对积分后和方程进行整理</span>
 <span class="n">ff</span> <span class="o">=</span> <span class="n">simplify</span><span class="p">(</span><span class="n">factor</span><span class="p">(</span><span class="n">simplify</span><span class="p">(</span><span class="n">fR</span><span class="p">))</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">xRi</span><span class="p">,</span> <span class="n">xLi</span><span class="o">+</span><span class="n">dx</span><span class="p">))</span>
 <span class="n">ff</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">dx</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
 </code></pre></div>
 
-<p>得到通量之后，针对某个网格，考虑左右边界的通量，并对时间进行积分，最终就可以获得平流的影响。</p>
+<p>在每个网格边界处的单位时间的平均浓度之后，针对某个网格，考虑左右边界的通量，并对时间进行积分，最终就可以获得平流的影响。</p>
 <p>
 <script type="math/tex; mode=display">
-  c_i^{n+1} = c_i^{n} + u\frac{\Delta t}{\Delta x}(f_{i-1/2}-f_{i+1/2})
+  c_i^{n+1} = c_i^{n} + \frac{\Delta t}{\Delta x}(f_{i-1/2}-f_{i+1/2})
   \tag {2.13} \label {2.13}
 </script>
-</p>
-<p>
+其中<script type="math/tex">f_{i+1/2}</script> 为边界处的通量。
 <script type="math/tex; mode=display">
   f_{i+1/2} = 
   \begin{cases}
-  f_{i+1/2, L}( u \Delta t) &\quad {\text{if } u \ge 0 }\\
-  f_{i+1/2, R}(-u \Delta t) &\quad {\text{if } u \le 0 } \\
+  c_{i+1/2, L}( u_{x_{i+1/2}} \Delta t) &\quad {\text{if } u_{x_{i+1/2}} \ge 0 }\\
+  c_{i+1/2, R}(-u_{x_{i+1/2}} \Delta t) &\quad {\text{if } u_{x_{i+1/2}} \le 0 } \\
   \end{cases}
   \tag {2.14} \label {2.14}
 </script>
