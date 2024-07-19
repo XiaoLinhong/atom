@@ -1,32 +1,23 @@
 
 program main
     !! This is our program
-    use routines, only: xyadv
-
+    use mod_ppm, only: adv_by_ppm
     implicit none
 
-    integer, parameter :: nx = 100
-    integer, parameter :: ny = 50
-    integer, parameter :: nt = 60
+    integer, parameter :: nx = 102
+    integer, parameter :: nt = 150
     real, parameter :: dt = 1.0
-    real :: dx, dy
-    real, dimension(nx, ny) :: u, v, conc
+    real, parameter :: dx = 5.0
+    real, dimension(nx) :: u, c, increment
+    integer :: i
 
-    integer :: i, j
+    c = 0.
+    u = 2.0 
 
-    dx = 10
-    dy = 10
-    ! Set initial condition (e.g., Gaussian distribution)
-    do i = 1, nx
-        do j = 1, ny
-            conc(i, j) = exp(-((i*dx - 0.5)**2 + (j*dy - 0.5)**2) / 0.01)
-        end do
-    end do
-
-    u = 1
-    v = 1
     do i = 1, nt
-        call xyadv(u, v, conc, dt, dx, dy)
+        if nt >= 10: c(1) = 10. 
+        call adv_by_ppm(dt, dx, n, u, c, incrementy)
+        write(*, "20(6.2)") c(5:15)
     end do
 
 end program main

@@ -367,10 +367,10 @@ simplify(df.subs(x, x3))
 - 情况2: 格子\(i\) 位于浓度梯度很大的地方，比如左边界比右边界浓度大很多，但是该格子的平均浓度与左边界接近，那么二次多项式的曲线会形成比边界浓度更大的值（为了抵消右边比平均值低很多的情况），破坏了在一个格子里面的单调性。这种现象被称为[overshoot](https://zh.wikipedia.org/wiki/%E8%BF%87%E5%86%B2)（过充，或者超调，是指信号或者函数超过了预期值），发生overshoot时，网格左边界和右边界的值就会被重新设定，其判定条件为\(|\Delta c_i| < |c_{6,i}|\)，该条件通过对公式\ref{2.4} 求导，判定恒大于0 或者恒小于0 得到。
 
 \begin{align*}
-  c_{x_{i-1/2}} &= c_{x_{i+1/2}} = c_{x_i} \quad \text{if } 
-  (c_{x_{i+1/2}}-c_{x_i}) (c_{x_i}-c_{x_{i-1/2}}) \le 0 \\
-  c_{x_{i-1/2}} &= 3c_{x_i} - 2c_{x_{i+1/2}}  \quad \text{if }  \Delta c_i c_{6,i} > (\Delta c_i)^2 \\
-  c_{x_{i+1/2}} &= 3c_{x_i} - 2c_{x_{i-1/2}}  \quad \text{if } - \Delta c_i c_{6,i} > (\Delta c_i)^2
+  c_{x_{i-1/2}} &= c_{x_{i+1/2}} = c_{i} \quad \text{if } 
+  (c_{x_{i+1/2}}-c_{i}) (c_{i}-c_{x_{i-1/2}}) \le 0 \\
+  c_{x_{i-1/2}} &= 3c_{i} - 2c_{x_{i+1/2}}  \quad \text{if }  \Delta c_i c_{6,i} > (\Delta c_i)^2 \\
+  c_{x_{i+1/2}} &= 3c_{i} - 2c_{x_{i-1/2}}  \quad \text{if } - \Delta c_i c_{6,i} > (\Delta c_i)^2
   \tag {2.10} \label {2.10}
 \end{align*}
 
@@ -444,8 +444,8 @@ ff.subs(y, dx*x)
 \[
   f_{i+1/2} = 
   \begin{cases}
-  c_{i+1/2, L}( u_{x_{i+1/2}} \Delta t) &\quad {\text{if } u_{x_{i+1/2}} \ge 0 }\\
-  c_{i+1/2, R}(-u_{x_{i+1/2}} \Delta t) &\quad {\text{if } u_{x_{i+1/2}} \le 0 } \\
+  u_{x_{i+1/2}} \times c_{i+1/2, L}  &\quad {\text{if } u_{x_{i+1/2}} \ge 0 }\\
+  u_{x_{i+1/2}} \times c_{i+1/2, R}  &\quad {\text{if } u_{x_{i+1/2}} \le 0 } \\
   \end{cases}
   \tag {2.14} \label {2.14}
 \]

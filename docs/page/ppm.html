@@ -436,10 +436,10 @@
 </ul>
 <p>
 <script type="math/tex; mode=display">\begin{align*}
-  c_{x_{i-1/2}} &= c_{x_{i+1/2}} = c_{x_i} \quad \text{if } 
-  (c_{x_{i+1/2}}-c_{x_i}) (c_{x_i}-c_{x_{i-1/2}}) \le 0 \\
-  c_{x_{i-1/2}} &= 3c_{x_i} - 2c_{x_{i+1/2}}  \quad \text{if }  \Delta c_i c_{6,i} > (\Delta c_i)^2 \\
-  c_{x_{i+1/2}} &= 3c_{x_i} - 2c_{x_{i-1/2}}  \quad \text{if } - \Delta c_i c_{6,i} > (\Delta c_i)^2
+  c_{x_{i-1/2}} &= c_{x_{i+1/2}} = c_{i} \quad \text{if } 
+  (c_{x_{i+1/2}}-c_{i}) (c_{i}-c_{x_{i-1/2}}) \le 0 \\
+  c_{x_{i-1/2}} &= 3c_{i} - 2c_{x_{i+1/2}}  \quad \text{if }  \Delta c_i c_{6,i} > (\Delta c_i)^2 \\
+  c_{x_{i+1/2}} &= 3c_{i} - 2c_{x_{i-1/2}}  \quad \text{if } - \Delta c_i c_{6,i} > (\Delta c_i)^2
   \tag {2.10} \label {2.10}
 \end{align*}</script>
 </p>
@@ -505,8 +505,8 @@ c_{i+1/2, R}(y) &= c_{x_{i+1-1/2}} - \frac{y}{2\Delta x}
 <script type="math/tex; mode=display">
   f_{i+1/2} = 
   \begin{cases}
-  c_{i+1/2, L}( u_{x_{i+1/2}} \Delta t) &\quad {\text{if } u_{x_{i+1/2}} \ge 0 }\\
-  c_{i+1/2, R}(-u_{x_{i+1/2}} \Delta t) &\quad {\text{if } u_{x_{i+1/2}} \le 0 } \\
+  u_{x_{i+1/2}} \times c_{i+1/2, L}  &\quad {\text{if } u_{x_{i+1/2}} \ge 0 }\\
+  u_{x_{i+1/2}} \times c_{i+1/2, R}  &\quad {\text{if } u_{x_{i+1/2}} \le 0 } \\
   \end{cases}
   \tag {2.14} \label {2.14}
 </script>
