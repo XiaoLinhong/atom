@@ -1,5 +1,5 @@
 module mod_ppm
-   !* The **one-dimensional implementation** of the PPM 
+   !* The **one-dimensional implementation** of the PPM
    ! （piecewise parabolic method, 分段抛物线法）
    !
    ! - 假设1：等距网格
