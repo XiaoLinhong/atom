@@ -1,0 +1,2 @@
+*.f90 text eol=lf
+*.md text eol=lf
