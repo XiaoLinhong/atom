@@ -10,6 +10,7 @@ ifeq ($(COMPIFLE),)
 endif
 
 ifeq ($(COMPIFLE), gnu)
+   AR = ar
    FC = gfortran
    # 增强警告
    FFLAGS += -Wall -Werror -Wall -Warray-bounds
@@ -17,10 +18,10 @@ ifeq ($(COMPIFLE), gnu)
    FFLAGS += -Wshadow -Wconversion
    # 
    FFLAGS += -Wunreachable-code -Wunused-parameter -Wunused-variable
-
 endif
 
 ifeq ($(COMPIFLE), intel)
+   AR = ar
    FC = ifort
    # Enable Intel compiler warnings
    FFLAGS += -warn all
@@ -30,7 +31,7 @@ ifeq ($(COMPIFLE), intel)
    FFLAGS += 
 endif
 
-ifeq ($(MAKECMDGOALS), $(filter $(MAKECMDGOALS),gdb vs))
+ifeq ($(MAKECMDGOALS), $(filter $(MAKECMDGOALS),gdb vscode))
     FFLAGS += -g
 else
     FFLAGS += -Ofast # Optimization flags
@@ -41,64 +42,66 @@ ifneq ($(MAKECMDGOALS), clean)
 endif
 
 ## 2. directory
-# Create the destination directory (`./build`)
-WORK_DIR  = $(shell pwd)
-SRC_DIR   = $(WORK_DIR)/src
-DST_DIR   = $(WORK_DIR)/build
-INC_DIR   = $(WORK_DIR)/build
+# Directory Structure(FPM)
+WORK_DIR := $(shell pwd)
+SRC_DIR  := $(WORK_DIR)/src
+APP_DIR  := $(WORK_DIR)/app
+DST_DIR  := $(WORK_DIR)/build/make
+INC_DIR  := $(WORK_DIR)/build/make
 
-# 创建编译目录
+# Create the destination directory (`./build`)
 $(shell mkdir -p $(DST_DIR))
 
 FFLAGS += -I$(INC_DIR)
 
 # execuble file
-EXE = $(DST_DIR)/$(TARGET)
+EXE = $(WORK_DIR)/build/$(TARGET)
+LIB = $(WORK_DIR)/build/lib$(TARGET).a
 
-# Source files: 
+# Source files
 SRCS := $(wildcard $(SRC_DIR)/*.f90) # 返回匹配到的文件列表
-SRCS +=  # Add your source files here 
+APPS := $(wildcard $(APP_DIR)/*.f90) # 返回匹配到的文件列表
 
 # Object files
 NAME := $(notdir $(SRCS))
-OBJS := $(addprefix $(DST_DIR)/, $(NAME:.f90=.o)) # 变量值的替换
-#DEPS := $(OBJECTS:.o=.d) # 头文件的依赖
+LIB_OBJS := $(addprefix $(DST_DIR)/, $(NAME:.f90=.o)) # 变量值的替换
+NAME := $(notdir $(APPS))
+APP_OBJS := $(addprefix $(DST_DIR)/, $(NAME:.f90=.o)) # 变量值的替换
 
 ## 3. compile
-ifeq ($(MAKECMDGOALS), test)
-    FFLAGS += -fbacktrace # Optimization flags
-    TEST_DIR = $(WORK_DIR)/$(TARGET)/test
-    SRCS += $(wildcard $(TEST_DIR)/*.f90)
-    EXE = $(WORK_DIR)/$(test)
-endif
-
-$(shell ./tool/deps $(SRCS) > $(DST_DIR)/Makefile.dep)
+$(shell ./tool/deps $(SRCS) > $(DST_DIR)/Makefile.lib.dep)
+include $(DST_DIR)/Makefile.lib.dep
 
 # link the program
-$(EXE): $(OBJS)
-	@$(FC) $(FFLAGS) $(LDFLAGS) $^ -o $@
+$(EXE): $(LIB) $(APP_OBJS)
+	@echo "buid $(EXE)"
+	@$(FC) $(FFLAGS) $(LDFLAGS) $(APP_OBJS) $(LIB) -o $@
 
 # 静态模式替换
-$(OBJS): $(DST_DIR)/%.o: $(SRC_DIR)/%.f90
-	$(FC) $(FFLAGS) -J$(DST_DIR) -c $< -o $@
+$(APP_OBJS): $(DST_DIR)/%.o: $(APP_DIR)/%.f90
+	@echo FC $@
+	@$(FC) $(FFLAGS) -J$(DST_DIR) -c $< -o $@
+
+$(LIB): $(LIB_OBJS)
+	@echo "link $(LIB)"
+	@$(AR) -sr $(LIB) $^
+
+# 静态模式替换
+$(LIB_OBJS): $(DST_DIR)/%.o: $(SRC_DIR)/%.f90
+	@echo FC $@
+	@$(FC) -fPIC $(FFLAGS) -J$(DST_DIR) -c $< -o $@
 
 ## 4. run this program 
-
-# Debug the program with GDB
-vs: $(EXE)
-	$(EXE)
-
-gdb: $(EXE)
-	gdb $(EXE)
-
 run: $(EXE)
 	$(EXE)
 
-test: $(EXE)
-	$(EXE)
+# Debug the program with GDB
+gdb: $(EXE)
+	gdb $(EXE)
+
+# Debug the program with GDB in vscode
+vscode: $(EXE)
 
 # Clean up
 clean:
-	rm -rf $(DST_DIR)
-
-include $(DST_DIR)/Makefile.dep
+	rm -rf $(DST_DIR) $(EXE) $(LIB)

@@ -1,5 +1,5 @@
 module mod_ppm
-   !* The **one-dimensional implementation** of the PPM 
+   !* The **one-dimensional implementation** of the PPM
    ! （piecewise parabolic method, 分段抛物线法）
    !
    ! - 假设1：等距网格
@@ -108,7 +108,7 @@ contains
       real :: transC(n)  ! 边界处的浓度随着风场输出(一小段距离)的平均浓度 transport
       real :: flux(n)    ! 边界处的通量
 
-      real :: CFL :  ! Courant-Friedrichs-Lewy条件：u*dt/dx
+      real :: CFL  ! Courant-Friedrichs-Lewy条件：u*dt/dx
       real :: fL, fR ! 一个网格的左右通量
       integer :: i
 
@@ -190,7 +190,7 @@ contains
          end if
          ! 公式2.13
          increment(i) = dt/dx * (fL - fR)
-         c(i) = c(i) + increment 
+         c(i) = c(i) + increment(i)
       end do
 
    end subroutine adv_by_ppm
