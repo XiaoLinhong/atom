@@ -95,6 +95,11 @@ $(LIB_OBJS): $(DST_DIR)/%.o: $(SRC_DIR)/%.f90
 run: $(EXE)
 	$(EXE)
 
+test: $(EXE)
+	$(EXE) > $(DST_DIR)/log
+	python tool/plot.py $(DST_DIR)/log
+	convert -delay 30 ./build/*png tmp.gif
+
 # Debug the program with GDB
 gdb: $(EXE)
 	gdb $(EXE)

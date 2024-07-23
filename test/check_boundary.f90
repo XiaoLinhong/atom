@@ -36,6 +36,9 @@ contains
     end do
     call check(error, c(1) == 10., "This is left boundary")
     call check(error, c(nx) == 0., "Right boundary must be 0")
+
+    call check(error, c(nx-1) <= 10., "This is left boundary")
+
   end subroutine test_boundary
 end module test_ppm
 

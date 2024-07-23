@@ -79,6 +79,9 @@ module mod_ppm
    !           flux(1)    flux(2) ->                     flux(n-1)
    !```
    implicit none
+   private
+
+   public :: adv_by_ppm
 
 contains
 
@@ -167,7 +170,7 @@ contains
       ! fluxes from boundary cells 
       if (u(1) > 0.) flux(1) = u(1) * leftC(1) ! assuming uniform distribution
       if (u(1) < 0.) flux(1) = u(1) * leftC(1+1) ! First order polynomial
-      if (u(n-1) > 0.) flux(n-1) = u(n-1) * rightC(n-1) ! First order polynomial
+      if (u(n-1) > 0.) flux(n-1) = u(n-1) * c(n-1) ! First order polynomial
       if (u(n-1) < 0.) flux(n-1) = u(n-1) * rightC(n)
       ! fluxes from the parabolic distribution
       do i=2, n-2
